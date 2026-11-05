@@ -1,0 +1,712 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090713">
+  <meta name="description" content="ORION — A new way to think, create and explore with AI.">
+  <title>ORION — Your AI Universe</title>
+
+  <style>
+    :root {
+      --bg: #090713;
+      --panel: #100d1d;
+      --panel2: #171225;
+      --border: rgba(255,255,255,.09);
+      --text: #f8f5ff;
+      --muted: #a49bb7;
+      --purple: #a56cff;
+      --pink: #ec76db;
+      --glow: rgba(165,108,255,.22);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 15% 10%, #35154e55, transparent 38%),
+        radial-gradient(ellipse at 90% 80%, #541b5b33, transparent 35%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    }
+
+    button, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 255px 1fr;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--border);
+      background: rgba(12,9,23,.88);
+      padding: 22px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 5px 20px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 23px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      box-shadow: 0 0 30px var(--glow);
+    }
+
+    .brand-name {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: 3px;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      margin-top: 3px;
+    }
+
+    .new-chat {
+      width: 100%;
+      padding: 13px;
+      color: white;
+      border: 1px solid rgba(190,145,255,.35);
+      border-radius: 12px;
+      background: linear-gradient(110deg,#8e4eea,#c65bc8);
+      font-weight: 700;
+      transition: .2s;
+    }
+
+    .new-chat:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--glow);
+    }
+
+    .section-label {
+      color: #81788f;
+      font-size: 10px;
+      letter-spacing: 2px;
+      font-weight: 800;
+      margin: 8px 5px;
+    }
+
+    .side-item {
+      width: 100%;
+      text-align: left;
+      padding: 11px;
+      color: var(--muted);
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 10px;
+      margin-bottom: 5px;
+    }
+
+    .side-item:hover, .side-item.active {
+      color: white;
+      background: var(--panel2);
+      border-color: var(--border);
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 3px;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg,#a56cff,#e77bd4);
+      font-weight: 800;
+    }
+
+    .profile-name { font-size: 13px; font-weight: 700; }
+    .profile-plan { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    .main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,7,19,.55);
+      backdrop-filter: blur(16px);
+    }
+
+    .top-title { font-size: 14px; font-weight: 700; }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status {
+      font-size: 11px;
+      color: #b5f4d2;
+      background: #153326;
+      padding: 7px 11px;
+      border-radius: 30px;
+    }
+
+    .icon-btn {
+      width: 37px;
+      height: 37px;
+      border: 1px solid var(--border);
+      color: white;
+      border-radius: 10px;
+      background: var(--panel);
+    }
+
+    .content {
+      width: min(900px,100%);
+      margin: 0 auto;
+      padding: 45px 25px 25px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .welcome {
+      text-align: center;
+      margin: 35px 0 35px;
+    }
+
+    .orb {
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 25px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 39px;
+      background:
+        radial-gradient(circle at 35% 25%,#fff 0%,#e7b6ff 8%,#a56cff 35%,#642a9b 72%,#20102e 100%);
+      box-shadow: 0 0 35px #a56cff66, 0 0 100px #b44ce533;
+      animation: float 5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-9px); }
+    }
+
+    .welcome h1 {
+      font-size: clamp(29px,5vw,47px);
+      margin: 0;
+      letter-spacing: -1.5px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg,#c69aff,#f08cdd);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .welcome p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+      margin: 13px auto 0;
+      max-width: 460px;
+    }
+
+    .suggestions {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 12px;
+      margin: 0 0 28px;
+    }
+
+    .suggestion {
+      text-align: left;
+      padding: 16px;
+      min-height: 83px;
+      color: white;
+      border: 1px solid var(--border);
+      background: linear-gradient(145deg,#171225,#100d1d);
+      border-radius: 14px;
+      transition: .2s;
+    }
+
+    .suggestion:hover {
+      border-color: #a56cff88;
+      transform: translateY(-2px);
+    }
+
+    .suggestion strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 7px;
+    }
+
+    .suggestion span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .messages {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      padding-bottom: 25px;
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 15px 17px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      font-size: 14px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: linear-gradient(130deg,#59328d,#853f91);
+      border-color: #bd8bff44;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: var(--panel2);
+    }
+
+    .message-label {
+      display: block;
+      font-size: 10px;
+      color: #c5a7ed;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 7px;
+    }
+
+    .composer-wrap {
+      margin-top: auto;
+      position: sticky;
+      bottom: 0;
+      padding: 18px 0 12px;
+      background: linear-gradient(transparent,var(--bg) 20%);
+    }
+
+    .composer {
+      border: 1px solid #9c6bd866;
+      background: rgba(20,15,34,.96);
+      border-radius: 17px;
+      padding: 13px;
+      box-shadow: 0 0 35px #8e4eea12;
+    }
+
+    .composer textarea {
+      display: block;
+      width: 100%;
+      resize: none;
+      min-height: 50px;
+      max-height: 150px;
+      outline: none;
+      border: 0;
+      color: white;
+      background: transparent;
+      font-size: 14px;
+      padding: 8px;
+    }
+
+    .composer textarea::placeholder { color: #81788f; }
+
+    .composer-tools {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-top: 9px;
+      border-top: 1px solid var(--border);
+    }
+
+    .tool-group { display: flex; align-items: center; gap: 8px; }
+
+    select {
+      max-width: 170px;
+      padding: 9px;
+      color: #e9dfff;
+      background: #211832;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      outline: none;
+      font-size: 11px;
+    }
+
+    .send {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      color: white;
+      border-radius: 11px;
+      font-size: 18px;
+      background: linear-gradient(135deg,#a56cff,#e66dce);
+    }
+
+    .send:disabled { opacity: .45; cursor: not-allowed; }
+
+    .disclaimer {
+      text-align: center;
+      color: #777084;
+      font-size: 10px;
+      line-height: 1.5;
+      margin-top: 11px;
+    }
+
+    .voice-panel {
+      display: none;
+      margin: 0 auto 18px;
+      padding: 17px;
+      width: min(390px,100%);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: var(--panel2);
+      text-align: center;
+    }
+
+    .voice-panel.visible { display: block; }
+
+    .wave {
+      height: 38px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      margin: 10px 0;
+    }
+
+    .wave i {
+      display: block;
+      width: 4px;
+      height: 9px;
+      border-radius: 5px;
+      background: linear-gradient(var(--pink),var(--purple));
+    }
+
+    .voice-panel.active .wave i {
+      animation: wave .7s ease-in-out infinite alternate;
+    }
+
+    .wave i:nth-child(2n) { animation-delay: .2s; }
+    .wave i:nth-child(3n) { animation-delay: .35s; }
+
+    @keyframes wave {
+      to { height: 34px; }
+    }
+
+    .voice-panel p { color: var(--muted); font-size: 12px; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translate(-50%,20px);
+      opacity: 0;
+      pointer-events: none;
+      background: #241b35;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 17px;
+      font-size: 12px;
+      transition: .25s;
+      z-index: 5;
+    }
+
+    .toast.show { opacity: 1; transform: translate(-50%,0); }
+
+    @media(max-width:760px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .topbar { height: 60px; padding: 0 16px; }
+      .content { padding: 22px 15px 15px; }
+      .welcome { margin: 27px 0 25px; }
+      .orb { width: 75px; height: 75px; font-size: 32px; }
+      .suggestions { gap: 9px; }
+      .suggestion { padding: 12px; }
+      .message { max-width: 94%; }
+      .status { display: none; }
+    }
+
+    @media(max-width:390px) {
+      .suggestions { grid-template-columns: 1fr; }
+      .tool-group { gap: 5px; }
+      select { max-width: 135px; }
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+      *,*::before,*::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">✦</div>
+        <div>
+          <div class="brand-name">ORION</div>
+          <div class="brand-sub">INTELLIGENCE</div>
+        </div>
+      </div>
+
+      <button class="new-chat" id="newChat">＋ New conversation</button>
+
+      <div>
+        <div class="section-label">WORKSPACE</div>
+        <button class="side-item active" id="homeButton">⌂ &nbsp; Home</button>
+        <button class="side-item" id="clearButton">◷ &nbsp; Clear conversation</button>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="section-label">YOUR ACCOUNT</div>
+        <div class="profile">
+          <div class="avatar">O</div>
+          <div>
+            <div class="profile-name">ORION Explorer</div>
+            <div class="profile-plan">Preview experience</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="top-title">✦ &nbsp; ORION Workspace</div>
+        <div class="top-actions">
+          <span class="status">● Interface preview</span>
+          <button class="icon-btn" id="voiceButton" aria-label="Toggle voice panel">♫</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="welcome" id="welcome">
+          <div class="orb">✦</div>
+          <h1>Explore beyond <span class="gradient-text">limits.</span></h1>
+          <p>Your ideas deserve a universe of possibilities. Ask, create, learn and explore with ORION.</p>
+        </div>
+
+        <div class="suggestions" id="suggestions">
+          <button class="suggestion" data-prompt="Help me create a new project">
+            <strong>✧ Build something</strong>
+            <span>Turn an idea into a project.</span>
+          </button>
+          <button class="suggestion" data-prompt="Explain artificial intelligence simply">
+            <strong>◈ Learn something</strong>
+            <span>Understand complex topics.</span>
+          </button>
+          <button class="suggestion" data-prompt="Give me creative business ideas">
+            <strong>✦ Think creatively</strong>
+            <span>Discover new possibilities.</span>
+          </button>
+          <button class="suggestion" data-prompt="Help me write a professional email">
+            <strong>⌁ Create content</strong>
+            <span>Make your writing clearer.</span>
+          </button>
+        </div>
+
+        <div class="messages" id="messages" aria-live="polite"></div>
+
+        <div class="voice-panel" id="voicePanel">
+          <strong>ORION Voice</strong>
+          <div class="wave" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <p>Voice interface preview — voice services are not connected yet.</p>
+        </div>
+
+        <div class="composer-wrap">
+          <div class="composer">
+            <textarea id="prompt" rows="2" maxlength="4000"
+              placeholder="Message ORION..."></textarea>
+            <div class="composer-tools">
+              <div class="tool-group">
+                <select id="mode" aria-label="Model mode">
+                  <option value="auto">Automatic mode</option>
+                  <option value="manual">Manual mode</option>
+                </select>
+                <select id="model" aria-label="Choose model" disabled>
+                  <option value="openai">OpenAI</option>
+                  <option value="claude">Claude</option>
+                </select>
+              </div>
+              <button class="send" id="send" aria-label="Send message">↑</button>
+            </div>
+          </div>
+          <div class="disclaimer">
+            ORION preview interface. AI provider connections are not active yet.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    "use strict";
+
+    const $ = (id) => document.getElementById(id);
+
+    const promptInput = $("prompt");
+    const messages = $("messages");
+    const welcome = $("welcome");
+    const suggestions = $("suggestions");
+    const sendButton = $("send");
+    const modeSelect = $("mode");
+    const modelSelect = $("model");
+    const voicePanel = $("voicePanel");
+    const toast = $("toast");
+
+    let toastTimer;
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function updateMode() {
+      modelSelect.disabled = modeSelect.value !== "manual";
+    }
+
+    function addMessage(text, type) {
+      const bubble = document.createElement("div");
+      bubble.className = "message " + type;
+
+      const label = document.createElement("span");
+      label.className = "message-label";
+      label.textContent = type === "user" ? "YOU" : "ORION PREVIEW";
+
+      const content = document.createElement("div");
+      content.textContent = text;
+
+      bubble.append(label, content);
+      messages.appendChild(bubble);
+      bubble.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function sendMessage() {
+      const text = promptInput.value.trim();
+
+      if (!text) {
+        showToast("Please enter a message first.");
+        return;
+      }
+
+      addMessage(text, "user");
+
+      welcome.style.display = "none";
+      suggestions.style.display = "none";
+      messages.style.display = "flex";
+
+      promptInput.value = "";
+      promptInput.style.height = "auto";
+
+      const provider = modeSelect.value === "auto"
+        ? "Automatic selection"
+        : modelSelect.value === "claude" ? "Claude selected" : "OpenAI selected";
+
+      addMessage(
+        "Your message has been added to the ORION preview. " +
+        provider + ".\n\nThe AI backend is not connected yet. " +
+        "Once we configure the secure server, ORION will be able to " +
+        "send your request to the selected AI provider.",
+        "assistant"
+      );
+    }
+
+    function newChat() {
+      messages.replaceChildren();
+      messages.style.display = "none";
+      welcome.style.display = "block";
+      suggestions.style.display = "grid";
+      promptInput.value = "";
+      promptInput.focus();
+    }
+
+    sendButton.addEventListener("click", sendMessage);
+
+    promptInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    promptInput.addEventListener("input", () => {
+      promptInput.style.height = "auto";
+      promptInput.style.height =
+        Math.min(promptInput.scrollHeight, 150) + "px";
+    });
+
+    modeSelect.addEventListener("change", updateMode);
+
+    $("newChat").addEventListener("click", newChat);
+    $("homeButton").addEventListener("click", newChat);
+    $("clearButton").addEventListener("click", newChat);
+
+    $("voiceButton").addEventListener("click", () => {
+      voicePanel.classList.toggle("visible");
+      voicePanel.classList.toggle("active");
+    });
+
+    document.querySelectorAll(".suggestion").forEach((button) => {
+      button.addEventListener("click", () => {
+        promptInput.value = button.dataset.prompt || "";
+        promptInput.focus();
+      });
+    });
+
+    updateMode();
+  </script>
+</body>
+</html>
